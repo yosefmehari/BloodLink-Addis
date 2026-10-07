@@ -228,10 +228,10 @@ export default function Hero() {
                       />
                     </svg>
                     <span className="font-medium text-gray-700">
-                      Verified Donors across Addis Ababa
+                      Addis Ababa Donor Registry
                     </span>
                   </div>
-                  <span className="font-bold text-red-600">2,400+</span>
+                  <span className="font-bold text-red-600">Enrolling Now</span>
                 </div>
               </div>
 
