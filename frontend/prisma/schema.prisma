@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -12,4 +9,159 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// ENUMS
+// ==========================================
+
+enum UserRole {
+  DONOR
+  RECIPIENT
+  ADMIN
+}
+
+enum BloodType {
+  A_POSITIVE
+  A_NEGATIVE
+  B_POSITIVE
+  B_NEGATIVE
+  AB_POSITIVE
+  AB_NEGATIVE
+  O_POSITIVE
+  O_NEGATIVE
+}
+
+enum RequestUrgency {
+  STANDARD
+  URGENT
+  EMERGENCY
+}
+
+enum BloodRequestStatus {
+  PENDING
+  ACTIVE
+  FULFILLED
+  CANCELLED
+}
+
+enum DonationStatus {
+  PENDING
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+enum NotificationType {
+  REQUEST_MATCH
+  DONATION_UPDATE
+  EMERGENCY_ALERT
+  SYSTEM
+}
+
+// ==========================================
+// MODELS
+// ==========================================
+
+model User {
+  id          String     @id @default(cuid())
+  name        String
+  email       String     @unique
+  password    String
+  phone       String?
+  role        UserRole   @default(DONOR)
+  bloodType   BloodType?
+  location    String?
+  isAvailable Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relationships
+  bloodRequests BloodRequest[]
+  donations     Donation[]
+  notifications Notification[]
+
+  @@index([role])
+  @@index([bloodType])
+  @@index([location])
+  @@index([isAvailable])
+}
+
+model Hospital {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  phone     String
+  address   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  bloodRequests BloodRequest[]
+  donations     Donation[]
+
+  @@index([name])
+}
+
+model BloodRequest {
+  id          String             @id @default(cuid())
+  requesterId String
+  hospitalId  String
+  bloodType   BloodType
+  unitsNeeded Int                @default(1)
+  urgency     RequestUrgency     @default(URGENT)
+  location    String
+  description String?
+  status      BloodRequestStatus @default(PENDING)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  // Relationships
+  requester User       @relation(fields: [requesterId], references: [id], onDelete: Cascade)
+  hospital  Hospital   @relation(fields: [hospitalId], references: [id], onDelete: Restrict)
+  donations Donation[]
+
+  @@index([requesterId])
+  @@index([hospitalId])
+  @@index([bloodType, status])
+  @@index([urgency])
+  @@index([status])
+}
+
+model Donation {
+  id          String         @id @default(cuid())
+  donorId     String
+  requestId   String
+  hospitalId  String
+  status      DonationStatus @default(PENDING)
+  scheduledAt DateTime?
+  completedAt DateTime?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  // Relationships
+  donor    User         @relation(fields: [donorId], references: [id], onDelete: Cascade)
+  request  BloodRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  hospital Hospital     @relation(fields: [hospitalId], references: [id], onDelete: Restrict)
+
+  @@index([donorId])
+  @@index([requestId])
+  @@index([hospitalId])
+  @@index([status])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      NotificationType @default(SYSTEM)
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  // Relationships
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@index([createdAt])
 }
