@@ -12,5 +12,13 @@ if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
 }
 
+export {
+  UserRole,
+  BloodType,
+  RequestUrgency,
+  BloodRequestStatus,
+  DonationStatus,
+  NotificationType,
+} from "@/generated/prisma/enums";
 export * from "@/generated/prisma/enums";
 export default prisma;

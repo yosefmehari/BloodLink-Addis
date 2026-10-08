@@ -1,4 +1,4 @@
-import { BloodType } from "@/lib/prisma";
+import { BloodType } from "@/generated/prisma/enums";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
