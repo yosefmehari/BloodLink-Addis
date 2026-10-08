@@ -1,4 +1,4 @@
-import { PrismaClient } from "@/generated/prisma/client";
+import { PrismaClient } from "../generated/prisma/client";
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
@@ -19,6 +19,6 @@ export {
   BloodRequestStatus,
   DonationStatus,
   NotificationType,
-} from "@/generated/prisma/enums";
-export * from "@/generated/prisma/enums";
+} from "../generated/prisma/enums";
+export * from "../generated/prisma/enums";
 export default prisma;
