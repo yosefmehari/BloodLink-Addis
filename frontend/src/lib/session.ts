@@ -5,11 +5,16 @@ export const SESSION_COOKIE_NAME = "bloodlink_session";
 const SESSION_MAX_AGE_SECONDS = 7 * 24 * 60 * 60; // 7 days
 
 function getSessionSecret(): string {
-  return (
-    process.env.SESSION_SECRET ||
-    process.env.NEXTAUTH_SECRET ||
-    "bloodlink-addis-production-grade-session-secret-2026-key"
-  );
+  const secret = process.env.SESSION_SECRET || process.env.NEXTAUTH_SECRET;
+  if (!secret) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error(
+        "CRITICAL SECURITY CONFIGURATION: SESSION_SECRET environment variable must be set in production."
+      );
+    }
+    return "bloodlink-addis-dev-session-secret-key-do-not-use-in-production";
+  }
+  return secret;
 }
 
 export interface SessionPayload {

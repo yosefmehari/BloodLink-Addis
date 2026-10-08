@@ -29,7 +29,7 @@ export default function HospitalDonationsPage() {
                   <th className="py-3 px-5">Status</th>
                   <th className="py-3 px-5">Request ID</th>
                   <th className="py-3 px-5">Screening Center</th>
-                  <th className="py-3 px-5">Clinical Status</th>
+                  <th className="py-3 px-5">Intake Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-gray-700">
@@ -49,7 +49,7 @@ export default function HospitalDonationsPage() {
                     <td className="py-3.5 px-5 font-mono text-xs text-gray-500">{don.requestId}</td>
                     <td className="py-3.5 px-5 text-gray-500">{don.donationLocation}</td>
                     <td className="py-3.5 px-5 text-xs text-emerald-700 font-semibold">
-                      {don.status === "Completed" ? "Blood Cleared" : "Pending Intake"}
+                      {don.status === "Completed" ? "Intake Completed" : "Pending Intake"}
                     </td>
                   </tr>
                 ))}
